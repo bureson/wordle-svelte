@@ -1,27 +1,16 @@
 {
   "hosting": {
-    "public": "myApp",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
-        "function": "ssrServer"
+        "destination": "/index.html"
       }
-    ],
-    "predeploy": [
-      "npm run build"
-    ]
-  },
-  "functions": {
-    "source": "functions",
-    "codebase": "default",
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log"
-    ],
-    "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint"
     ]
   }
 }
