@@ -8,8 +8,5 @@
       }
     ],
     "predeploy": ["npm run build"]
-  },
-  "functions": {
-    "source": "functions"
   }
 }
