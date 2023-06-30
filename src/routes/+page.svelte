@@ -25,6 +25,10 @@
 
 <svelte:window on:keydown={onKeyDown} />
 
+<svelte:head>
+	<title>Wordle</title>
+</svelte:head>
+
 <style>
     h1 {
         color: aqua;
