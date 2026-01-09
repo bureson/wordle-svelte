@@ -15,28 +15,40 @@
 
     const focusInput = () => inputEl?.focus();
 
-    const onKeyDown = event => {
+    const onInput = (e) => {
+        if (success || failed) return;
+
+        const word = wordList[round] || '';
+        const value = e.target.value.toLowerCase().replace(/[^a-z]/g, '');
+        const newWord = word + value
+        wordList[round] = newWord.slice(0, 5);
+
+        e.target.value = '';
+    }
+
+    const onKeyDown = (e) => {
+        if (success || failed) return;
+
         const word = wordList[round];
-        if (success) return;
-        if (event.altKey || event.ctrlKey || event.shiftKey) return;
-        if (event.keyCode >= 65 && event.keyCode <= 90 && word.length < 5) { // Note: letters a-z
-            event.preventDefault();
-            wordList[round] = word + event.key;
-        } else if (event.keyCode === 8) { // Note: backspace
-            event.preventDefault();
-            wordList[round] = word.substring(0, word.length - 1);
-        } else if (event.keyCode === 13 && word.length === 5) { // Note: enter
+
+        if (e.key === 'Backspace') {
+            e.preventDefault();
+            wordList[round] = word.slice(0, -1);
+        }
+
+        if (e.key === 'Enter' && word.length === 5) {
+            e.preventDefault();
+
             if (word === rightWord) {
                 success = true;
-            } if ((round + 1) >= roundList.length) {
+            } else if (round + 1 >= 6) {
                 failed = true;
             } else {
-                event.preventDefault();
-                ++round;
-                wordList.push('');
+                round++;
+                wordList[round] = '';
             }
         }
-    };
+    }
 
     const resetGame = () => {
         round = 0;
@@ -103,6 +115,7 @@
         autocapitalize="none"
         spellcheck="false"
         bind:this={inputEl}
+        on:input={onInput}
         on:keydown={onKeyDown}
     />
     
