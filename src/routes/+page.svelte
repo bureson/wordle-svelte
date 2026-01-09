@@ -1,5 +1,4 @@
 <script>
-    import * as R from 'ramda';
     import Letter from '../component/letter.svelte';
 
     let rightWordList = ['jarda', 'ondra', 'lubos', 'milan', 'petra', 'libor', 'honza', 'jitka', 'hanka', 'irena', 'josef', 'radim', 'cyril', 'vojta', 'tomas', 'alice', 'robin', 'hynek', 'lenka', 'matej', 'mirek', 'radek', 'ivana', 'zofie', 'aneta', 'filip', 'adolf', 'alois', 'pavel', 'karel', 'jakub', 'oskar', 'klara', 'alena', 'ludek', 'marie'];
@@ -8,6 +7,7 @@
 
     let round = 0;
     let success = false;
+    let failed = false;
     let indexList = Array.from(Array(5).keys());
     let roundList = Array.from(Array(6).keys());
 
@@ -24,6 +24,8 @@
         } else if (event.keyCode === 13 && word.length === 5) { // Note: enter
             if (word === rightWord) {
                 success = true;
+            } if ((round + 1) >= roundList.length) {
+                failed = true;
             } else {
                 event.preventDefault();
                 ++round;
@@ -32,25 +34,55 @@
         }
     };
 
+    const resetGame = () => {
+        round = 0;
+        success = false;
+        failed = false;
+        wordList = [''];
+        rightWord = rightWordList[Math.floor(Math.random() * rightWordList.length)];
+    };
+
+    const capitalize = (text) => {
+        return text.replace(/^./, (str) => str.toUpperCase());
+    };
+
     const letterGetter = (wordList, roundIndex, letterIndex) => {
         const word = wordList[roundIndex] || '';
         const letter = word[letterIndex] || '';
         return letter;
     };
 
+    const evaluateWord = (guess, rightWord) => {
+        const result = Array(guess.length).fill('wrong');
+        const rightLetters = rightWord.split('');
+
+        for (let i = 0; i < guess.length; i++) {
+            if (guess[i] === rightLetters[i]) {
+                result[i] = 'correct';
+                rightLetters[i] = null; // Note: consume letter
+            }
+        }
+
+        for (let i = 0; i < guess.length; i++) {
+            if (result[i] === 'correct') continue;
+
+            const index = rightLetters.indexOf(guess[i]);
+            if (index !== -1) {
+                result[i] = 'misplaced';
+                rightLetters[index] = null; // Note: consume existence
+            }
+        }
+
+        return result;
+    };
+
     const classGetter = (wordList, roundIndex, letterIndex, currentRound, success) => {
         if (success ? roundIndex > currentRound : roundIndex >= currentRound) return 'early';
-        console.log({ wordList, roundIndex, word: wordList[roundIndex] });
-        const wordLetterList = wordList[roundIndex].split('');
-        const letter = wordLetterList[letterIndex];
-        if (rightWord[letterIndex] === letter) return 'correct';
-        if (rightWord.includes(letter)) {
-            const fixedRightWordLetterList = rightWord.split('').map((letter, index) => wordLetterList[index] === letter ? null : letter);
-            const letterCount = fixedRightWordLetterList.reduce((count, thisLetter) => letter === thisLetter ? count + 1 : count, 0);
-            const thisWordLetterCount = R.slice(0, letterIndex, wordLetterList).reduce((count, thisLetter) => letter === thisLetter ? count + 1 : count, 0);
-            if (fixedRightWordLetterList.includes(letter) && thisWordLetterCount <= letterCount) return 'misplaced';
-        }
-        return 'wrong';
+
+        const guess = wordList[roundIndex];
+        const evaluation = evaluateWord(guess, rightWord);
+
+        return evaluation[letterIndex];
     };
 </script>
 
@@ -58,6 +90,18 @@
     <h1>Wordle in Svelte</h1>
     <p>A recreation of the famous game Wordle made in the front-end Javascript framework Svelte.</p>
     <p>Guess Czech names without interpunction.</p>
+    
+    {#if success}
+        <p class="success">You guessed it! 🥳</p>
+    {/if}
+    {#if failed}
+        <p class="failed">Bad luck! 😵 You were looking for {capitalize(rightWord)}.</p>
+        <p class="failed">Better luck next time 🍀</p>
+    {/if}
+    {#if success || failed}
+        <button on:click={resetGame}>Try again</button>
+    {/if}
+
     <div class="game">
         {#each roundList as roundIndex}
             <div class="round-row">
@@ -70,9 +114,6 @@
             </div>
         {/each}
     </div>
-    {#if success}
-        <p class="success">You guessed it!</p>
-    {/if}
     <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 </div>
 
@@ -89,6 +130,12 @@
     a {
         color: burlywood;
     }
+    button {
+        padding: 10px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 18px;
+    }
     .container {
         width: 50%;
         margin: 100px auto;
@@ -98,7 +145,7 @@
     .game {
         margin: 60px 0 0;
     }
-    .success {
+    .success, .failed {
         color: red;
         font-size: 24px;
     }
