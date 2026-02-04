@@ -3,7 +3,7 @@
 
     let inputEl;
 
-    let rightWordList = ['adolf', 'adela', 'alena', 'alice', 'alois', 'aneta', 'bohus', 'cyril', 'elias', 'erika', 'evzen', 'fanda', 'filip', 'hanka', 'honza', 'hynek', 'irena', 'jakub', 'jarda', 'jirka', 'jitka', 'josef', 'kamil', 'karel', 'klara', 'kvido', 'lenka', 'libor', 'lubos', 'ludek', 'marek', 'marie', 'matej', 'milan', 'mirek', 'nikol', 'ondra', 'oskar', 'petra', 'pavel', 'pavla', 'radek', 'radim', 'robin', 'roman', 'sarka', 'silva', 'terka', 'tomas', 'verka', 'vilma', 'vojta', 'terez', 'zdena', 'zlata', 'zofie'];
+    let rightWordList = ['adolf', 'adela', 'alena', 'alice', 'alois', 'aneta', 'bohus', 'cyril', 'elias', 'erika', 'evzen', 'fanda', 'filip', 'hanka', 'honza', 'hynek', 'irena', 'jakub', 'jarda', 'jirka', 'jitka', 'josef', 'kamil', 'karel', 'klara', 'kvido', 'lenka', 'libor', 'lubos', 'ludek', 'marek', 'marie', 'matej', 'milan', 'mirek', 'nikol', 'ondra', 'oskar', 'petra', 'pavel', 'pavla', 'radek', 'radim', 'robin', 'roman', 'sarka', 'silva', 'terka', 'tomas', 'verka', 'vilma', 'vojta', 'terez', 'zdena', 'zlata', 'zofie', 'zorka'];
     let rightWord = rightWordList[Math.floor(Math.random() * rightWordList.length)];
     let wordList = [''];
 
